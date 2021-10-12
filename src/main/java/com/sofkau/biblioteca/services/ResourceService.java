@@ -4,7 +4,7 @@ import com.sofkau.biblioteca.dtos.ResourceDTO;
 import com.sofkau.biblioteca.mappers.ResourceMapper;
 import com.sofkau.biblioteca.models.Resource;
 import com.sofkau.biblioteca.repositories.ResourceRepository;
-import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -18,6 +18,7 @@ public class ResourceService {
     private ResourceRepository repository;
     private ResourceMapper mapper;
 
+    @Autowired
     public ResourceService(ResourceRepository repository, ResourceMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
@@ -34,7 +35,7 @@ public class ResourceService {
             throw new IllegalArgumentException("el nombre no puede estar vacio");
         }
         Resource resource = mapper.convertToDocument(resourceDTO);
-        return mapper.convertToDto(repository.save(resource));
+        return mapper.convertToDto(repository.insert(resource));
     }
 
     public ResourceDTO getById(String id) {
@@ -52,7 +53,7 @@ public class ResourceService {
     public ResourceDTO update(ResourceDTO resourceDTO) {
         Resource resource = mapper.convertToDocument(resourceDTO);
         getById(resource.getId());
-        return mapper.convertToDto(resource);
+        return mapper.convertToDto(repository.save(resource));
     }
 
     public String checkAvailability(String id) {
@@ -80,13 +81,13 @@ public class ResourceService {
 
     public List<ResourceDTO> recommendByType(String type) {
         List<ResourceDTO> resourceDTOS = new ArrayList<>();
-        repository.findAllByType(type).forEach(resource -> resourceDTOS.add(mapper.convertToDto(resource)));
+        repository.findByType(type).forEach(resource -> resourceDTOS.add(mapper.convertToDto(resource)));
         return resourceDTOS;
     }
 
     public List<ResourceDTO> recommendByTheme(String theme) {
         List<ResourceDTO> resourceDTOS = new ArrayList<>();
-        repository.findAllBytheme(theme).forEach(resource -> resourceDTOS.add(mapper.convertToDto(resource)));
+        repository.findByThematic(theme).forEach(resource -> resourceDTOS.add(mapper.convertToDto(resource)));
         return resourceDTOS;
     }
 

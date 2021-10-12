@@ -23,5 +23,4 @@ public class Resource {
     private int quantityBorrowed;
     private String type;
     private String thematic;
-    private boolean available;
 }

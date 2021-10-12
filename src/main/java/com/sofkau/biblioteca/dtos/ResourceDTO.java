@@ -17,6 +17,5 @@ public class ResourceDTO {
     private int quantityBorrowed;
     private String type;
     private String thematic;
-    private boolean available;
 }
 

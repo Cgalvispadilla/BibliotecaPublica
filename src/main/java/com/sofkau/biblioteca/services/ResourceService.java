@@ -59,7 +59,7 @@ public class ResourceService {
     public String checkAvailability(String id) {
         ResourceDTO dto = getById(id);
         if (isAvailable(dto)) {
-            return "El recurso " + dto.getName() + " esta disponible";
+            return "El recurso " + dto.getName() + " disponible y cuenta con "+(dto.getQuantityAvailable()-dto.getQuantityBorrowed())+" unidad(es) disponible(es)";
         }
         return "el recurso " + dto.getName() + " no esta disponible " + " fue prestado " + dto.getLoanDate();
     }
@@ -76,7 +76,7 @@ public class ResourceService {
             update(dto);
             return "El recurso " + dto.getName() + " se ha prestado";
         }
-        return "el recurso " + dto.getName() + " no esta disponible para prestarse";
+        return "el recurso " + dto.getName() + " no tiene unidades disponibles para prestarse";
     }
 
     public List<ResourceDTO> recommendByType(String type) {

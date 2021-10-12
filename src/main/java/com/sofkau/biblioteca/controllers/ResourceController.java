@@ -46,4 +46,10 @@ public class ResourceController {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
     }
+
+    @GetMapping("/disponibilidad/{id}")
+    public ResponseEntity availability(@PathVariable("id") String id){
+        return new ResponseEntity(resourceService.checkAvailability(id), HttpStatus.OK);
+    }
+
 }

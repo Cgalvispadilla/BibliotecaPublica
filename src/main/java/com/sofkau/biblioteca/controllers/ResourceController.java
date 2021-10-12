@@ -52,4 +52,8 @@ public class ResourceController {
         return new ResponseEntity(resourceService.checkAvailability(id), HttpStatus.OK);
     }
 
+    @PutMapping("/prestar/{id}")
+    public ResponseEntity lend(@PathVariable("id") String id){
+        return  new ResponseEntity(resourceService.lend(id), HttpStatus.OK);
+    }
 }

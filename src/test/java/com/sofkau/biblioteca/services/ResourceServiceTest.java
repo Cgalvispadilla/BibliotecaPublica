@@ -167,7 +167,21 @@ class ResourceServiceTest {
 
 
     @Test
-    void checkAvailability() {
+    void checkAvailabilityOfExistenceToLend() {
+        var recursoOne = new ResourceDTO();
+        recursoOne.setId("R-111");
+        recursoOne.setName("Revista xyz");
+        recursoOne.setQuantityAvailable(2);
+        recursoOne.setLoanDate(LocalDate.now());
+        recursoOne.setQuantityBorrowed(1);
+        recursoOne.setType("Revista");
+        recursoOne.setThematic("Farandula");
+
+        Mockito.when(repository.findById(recursoOne.getId())).thenReturn(recursos().stream().findFirst());
+
+        var resultado = resourceService.checkAvailability(recursoOne.getId());
+
+        Assertions.assertEquals("El recurso " + recursos().stream().findFirst().get().getName() + " disponible y cuenta con "+(recursos().stream().findFirst().get().getQuantityAvailable()-recursos().stream().findFirst().get().getQuantityBorrowed())+" unidad(es) disponible(es)",resultado);
     }
 
     @Test

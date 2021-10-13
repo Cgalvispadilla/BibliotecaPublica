@@ -56,4 +56,20 @@ public class ResourceController {
     public ResponseEntity lend(@PathVariable("id") String id){
         return  new ResponseEntity(resourceService.lend(id), HttpStatus.OK);
     }
+
+    //el NA es "No Aplica" puesto que puede ser una de estas o ambas
+    @GetMapping("/recomendar/{type}/{thematic}")
+    public ResponseEntity<ResourceDTO> recommendation( @PathVariable("type") String type,@PathVariable("thematic") String thematic){
+        if(thematic.equals("NA")&&!type.equals("NA")){
+            return new ResponseEntity(resourceService.recommendByType(type),HttpStatus.OK);
+        }
+        if(!thematic.equals("NA")&&type.equals("NA")){
+            return new ResponseEntity(resourceService.recommendByTheme(thematic),HttpStatus.OK);
+        }
+        return new ResponseEntity(resourceService.recommendByTypeAndTheme(type,thematic),HttpStatus.OK);
+    }
+    @PutMapping("/devolver/{id}")
+    public ResponseEntity returnResource(@PathVariable("id") String id){
+        return  new ResponseEntity(resourceService.returnResource(id), HttpStatus.OK);
+    }
 }

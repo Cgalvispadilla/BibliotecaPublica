@@ -4,7 +4,6 @@ import com.sofkau.biblioteca.dtos.ResourceDTO;
 import com.sofkau.biblioteca.mappers.ResourceMapper;
 import com.sofkau.biblioteca.models.Resource;
 import com.sofkau.biblioteca.repositories.ResourceRepository;
-import org.apache.catalina.mapper.Mapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,8 +16,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class ResourceServiceTest {
@@ -32,10 +29,10 @@ class ResourceServiceTest {
     @Test
     @DisplayName("Test para obtener todos los recursos de manera exitosa")
     void getAll() {
-        var recursoOne = new Resource();
 
         Mockito.when(repository.findAll()).thenReturn(recursos());
         var resultado = resourceService.getAll();
+
         Assertions.assertEquals(2, resultado.size());
         Assertions.assertEquals("R-111", resultado.get(0).getId());
         Assertions.assertEquals("Revista xyz", resultado.get(0).getName());
@@ -44,6 +41,7 @@ class ResourceServiceTest {
         Assertions.assertEquals(0, resultado.get(0).getQuantityBorrowed());
         Assertions.assertEquals("Revista", resultado.get(0).getType());
         Assertions.assertEquals("Farandula", resultado.get(0).getThematic());
+
         Assertions.assertEquals("L-111", resultado.get(1).getId());
         Assertions.assertEquals("Libro xyz", resultado.get(1).getName());
         Assertions.assertEquals(2, resultado.get(1).getQuantityAvailable());
@@ -200,12 +198,51 @@ class ResourceServiceTest {
         Mockito.when(repository.save(Mockito.any())).thenReturn(mapper.convertToDocument(recursoOne));
         var resultado = resourceService.lend(recursoOne.getId());
 
-        Assertions.assertEquals("El recurso " + recursoOne.getName() + " se ha prestado",resultado);
+        Assertions.assertEquals("El recurso " + recursoOne.getName() + " se ha prestado", resultado);
 
     }
 
     @Test
     void recommendByType() {
+        var recursoOne = new Resource();
+        recursoOne.setId("R-111");
+        recursoOne.setName("Revista xyz");
+        recursoOne.setQuantityAvailable(2);
+        recursoOne.setLoanDate(null);
+        recursoOne.setQuantityBorrowed(0);
+        recursoOne.setType("Revista");
+        recursoOne.setThematic("Farandula");
+        var recursoTwo = new Resource();
+        recursoOne.setId("R-222");
+        recursoOne.setName("Revista zxy");
+        recursoOne.setQuantityAvailable(2);
+        recursoOne.setLoanDate(null);
+        recursoOne.setQuantityBorrowed(0);
+        recursoOne.setType("Revista");
+        recursoOne.setThematic("Farandula");
+        List<Resource> miLista = List.of(recursoOne, recursoTwo);
+
+        Mockito.when(repository.findByType("Revista")).thenReturn(miLista);
+
+        var resultado = resourceService.recommendByType("Revista");
+
+        Assertions.assertEquals(2, resultado.size());
+
+        Assertions.assertEquals("R-111", resultado.get(0).getId(), "el id debe corresponder");
+        Assertions.assertEquals("Revista xyz", resultado.get(0).getName(), "el nombre debe corresponder");
+        Assertions.assertEquals(2, resultado.get(0).getQuantityAvailable(), "la cantidad disponible debe ser igual");
+        Assertions.assertEquals(null, resultado.get(0).getLoanDate(), "la fecha de cuando se presto debe estar nula");
+        Assertions.assertEquals(0, resultado.get(0).getQuantityBorrowed(), "la cantidad prestada debe ser cero");
+        Assertions.assertEquals("Revista", resultado.get(0).getType(), "el tipo debe coincidir ");
+        Assertions.assertEquals("Farandula", resultado.get(0).getThematic(), "la tematica debe coincidir");
+
+        Assertions.assertEquals("R-222", resultado.get(0).getId(), "el id debe corresponder");
+        Assertions.assertEquals("Revista zxy", resultado.get(0).getName(), "el nombre debe corresponder");
+        Assertions.assertEquals(2, resultado.get(0).getQuantityAvailable(), "la cantidad disponible debe ser igual");
+        Assertions.assertEquals(null, resultado.get(0).getLoanDate(), "la fecha de cuando se presto debe estar nula");
+        Assertions.assertEquals(0, resultado.get(0).getQuantityBorrowed(), "la cantidad prestada debe ser cero");
+        Assertions.assertEquals("Revista", resultado.get(0).getType(), "el tipo debe coincidir ");
+        Assertions.assertEquals("Farandula", resultado.get(0).getThematic(), "la tematica debe coincidir");
     }
 
     @Test

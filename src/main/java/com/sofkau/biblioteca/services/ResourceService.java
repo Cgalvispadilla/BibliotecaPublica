@@ -35,7 +35,7 @@ public class ResourceService {
             throw new IllegalArgumentException("el nombre no puede estar vacio");
         }
         Resource resource = mapper.convertToDocument(resourceDTO);
-        return mapper.convertToDto(repository.insert(resource));
+        return mapper.convertToDto(repository.save(resource));
     }
 
     public ResourceDTO getById(String id) {

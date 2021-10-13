@@ -167,6 +167,7 @@ class ResourceServiceTest {
 
 
     @Test
+    @DisplayName("Test para verificar disponibilidad de recurso")
     void checkAvailabilityOfExistenceToLend() {
         var recursoOne = new ResourceDTO();
         recursoOne.setId("R-111");
@@ -181,11 +182,26 @@ class ResourceServiceTest {
 
         var resultado = resourceService.checkAvailability(recursoOne.getId());
 
-        Assertions.assertEquals("El recurso " + recursos().stream().findFirst().get().getName() + " disponible y cuenta con "+(recursos().stream().findFirst().get().getQuantityAvailable()-recursos().stream().findFirst().get().getQuantityBorrowed())+" unidad(es) disponible(es)",resultado);
+        Assertions.assertEquals("El recurso " + recursos().stream().findFirst().get().getName() + " disponible y cuenta con " + (recursos().stream().findFirst().get().getQuantityAvailable() - recursos().stream().findFirst().get().getQuantityBorrowed()) + " unidad(es) disponible(es)", resultado);
     }
 
     @Test
-    void lend() {
+    @DisplayName("Test para prestar un recurso de manera exitosa")
+    void LendResourceSuccessfully() {
+        var recursoOne = new ResourceDTO();
+        recursoOne.setId("R-111");
+        recursoOne.setName("Revista xyz");
+        recursoOne.setQuantityAvailable(2);
+        recursoOne.setLoanDate(LocalDate.now());
+        recursoOne.setQuantityBorrowed(1);
+        recursoOne.setType("Revista");
+        recursoOne.setThematic("Farandula");
+        Mockito.when(repository.findById(recursoOne.getId())).thenReturn(recursos().stream().findFirst());
+        Mockito.when(repository.save(Mockito.any())).thenReturn(mapper.convertToDocument(recursoOne));
+        var resultado = resourceService.lend(recursoOne.getId());
+
+        Assertions.assertEquals("El recurso " + recursoOne.getName() + " se ha prestado",resultado);
+
     }
 
     @Test

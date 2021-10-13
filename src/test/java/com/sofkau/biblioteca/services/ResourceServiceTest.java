@@ -16,6 +16,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -102,7 +103,23 @@ class ResourceServiceTest {
     }
 
     @Test
+    @DisplayName("test para buscar un recurso por el id")
     void getById() {
+
+        Mockito.when(repository.findById(Mockito.any())).thenReturn(recursos().stream().findFirst());
+
+        var resultado = resourceService.getById(recursos().get(0).getId());
+
+        Assertions.assertEquals(recursos().get(0).getId(), resultado.getId(),"el id debe corresponder");
+        Assertions.assertEquals("Revista xyz", resultado.getName(),"el nombre debe corresponder");
+        Assertions.assertEquals(2, resultado.getQuantityAvailable(),"la cantidad disponible debe ser igual");
+        Assertions.assertEquals(null, resultado.getLoanDate(),"la fecha de cuando se presto debe estar nula");
+        Assertions.assertEquals(0, resultado.getQuantityBorrowed(),"la cantidad prestada debe ser cero");
+        Assertions.assertEquals("Revista", resultado.getType(),"el tipo debe coincidir ");
+        Assertions.assertEquals("Farandula", resultado.getThematic(),"la tematica debe coincidir");
+
+
+
     }
 
     @Test

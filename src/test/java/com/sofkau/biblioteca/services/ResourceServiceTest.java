@@ -15,6 +15,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import reactor.test.StepVerifier;
+import static org.mockito.Mockito.verify;
 
 
 @SpringBootTest
@@ -120,7 +122,7 @@ class ResourceServiceTest {
 
     }
 
-   /* @Test
+/*  @Test
     void delete() {
         var recursoOne = new Resource();
         recursoOne.setId("R-111");
@@ -130,10 +132,12 @@ class ResourceServiceTest {
         recursoOne.setQuantityBorrowed(0);
         recursoOne.setType("Revista");
         recursoOne.setThematic("Farandula");
-        Mockito.when(repository.findById(recursoOne.getId())).thenReturn(recursos().stream().findFirst());
-        resourceService.delete(recursoOne.getId());
+        var aux= recursos().stream().findFirst();
+        Mockito.when(repository.findById(recursoOne.getId())).thenReturn(aux);
+        //StepVerifier.create(resourceService.delete(aux.get().getId())).expectNextMatches()
 
-        verify(repository,times(1)).delete(recursos().stream().findFirst().get());
+
+        verify(repository).delete(aux.get());
     }*/
 
     @Test
@@ -247,6 +251,46 @@ class ResourceServiceTest {
 
     @Test
     void recommendByTheme() {
+        var recursoOne = new Resource();
+        recursoOne.setId("R-111");
+        recursoOne.setName("Revista xyz");
+        recursoOne.setQuantityAvailable(2);
+        recursoOne.setLoanDate(null);
+        recursoOne.setQuantityBorrowed(0);
+        recursoOne.setType("Revista");
+        recursoOne.setThematic("Farandula");
+        var recursoTwo = new Resource();
+        recursoOne.setId("R-222");
+        recursoOne.setName("Revista zxy");
+        recursoOne.setQuantityAvailable(2);
+        recursoOne.setLoanDate(null);
+        recursoOne.setQuantityBorrowed(0);
+        recursoOne.setType("Revista");
+        recursoOne.setThematic("Farandula");
+
+        List<Resource> miLista = List.of(recursoOne, recursoTwo);
+
+        Mockito.when(repository.findByThematic("Farandula")).thenReturn(miLista);
+
+        var resultado = resourceService.recommendByTheme("Farandula");
+
+        Assertions.assertEquals(2, resultado.size());
+
+        Assertions.assertEquals("R-111", resultado.get(0).getId(), "el id debe corresponder");
+        Assertions.assertEquals("Revista xyz", resultado.get(0).getName(), "el nombre debe corresponder");
+        Assertions.assertEquals(2, resultado.get(0).getQuantityAvailable(), "la cantidad disponible debe ser igual");
+        Assertions.assertEquals(null, resultado.get(0).getLoanDate(), "la fecha de cuando se presto debe estar nula");
+        Assertions.assertEquals(0, resultado.get(0).getQuantityBorrowed(), "la cantidad prestada debe ser cero");
+        Assertions.assertEquals("Revista", resultado.get(0).getType(), "el tipo debe coincidir ");
+        Assertions.assertEquals("Farandula", resultado.get(0).getThematic(), "la tematica debe coincidir");
+
+        Assertions.assertEquals("R-222", resultado.get(0).getId(), "el id debe corresponder");
+        Assertions.assertEquals("Revista zxy", resultado.get(0).getName(), "el nombre debe corresponder");
+        Assertions.assertEquals(2, resultado.get(0).getQuantityAvailable(), "la cantidad disponible debe ser igual");
+        Assertions.assertEquals(null, resultado.get(0).getLoanDate(), "la fecha de cuando se presto debe estar nula");
+        Assertions.assertEquals(0, resultado.get(0).getQuantityBorrowed(), "la cantidad prestada debe ser cero");
+        Assertions.assertEquals("Revista", resultado.get(0).getType(), "el tipo debe coincidir ");
+        Assertions.assertEquals("Farandula", resultado.get(0).getThematic(), "la tematica debe coincidir");
     }
 
     @Test
